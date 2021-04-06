@@ -1,0 +1,6 @@
+/.idea
+/.eggs
+/build
+/dist
+/src/*.egg-info
+*.py[oc]
