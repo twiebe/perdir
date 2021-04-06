@@ -4,7 +4,7 @@ from setuptools import find_namespace_packages, setup
 setup(
     name='perdir',
     version='1',
-    url='https://github.com/twiebe/py-perdir',
+    url='https://github.com/twiebe/perdir',
     license='BSD',
     author='Thomas Wiebe',
     author_email='code@heimblick.net',
