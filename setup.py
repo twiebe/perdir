@@ -3,7 +3,7 @@ from setuptools import find_namespace_packages, setup
 
 setup(
     name='perdir',
-    version='1',
+    version='2',
     url='https://github.com/twiebe/perdir',
     license='BSD',
     author='Thomas Wiebe',
