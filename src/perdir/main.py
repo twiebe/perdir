@@ -5,10 +5,10 @@ import sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from asyncio.subprocess import STDOUT
 from pathlib import Path
-from progressbar import ProgressBar
 from tempfile import TemporaryFile
 from termcolor import cprint, colored
 from typing import Union
+from alive_progress import alive_it
 
 DESCRIPTION = '''Perdir. Execute a command in a set of paths and show its output.
 
@@ -25,20 +25,6 @@ class SignalHandler:
     def handle(self, _signum=None, _frame=None):
         cprint("Interrupt received. Aborting.", color='red')
         sys.exit(1)
-
-
-class DummyProgressbar:
-    def __init__(self, *a, **kw):
-        return
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        return
-
-    def update(self, *a, **kw):
-        return
 
 
 class ParallelismArgumentType:
@@ -199,14 +185,16 @@ async def main():
         tasks.append(task)
     tasks_failed = False
     if tasks:
-        progressbar_cls = ProgressBar if args.progressbar else DummyProgressbar
-        with progressbar_cls(max_value=len(tasks), redirect_stdout=True) as progressbar:
-            progressbar.update(0)
-            for i, task in enumerate(asyncio.as_completed(tasks), 1):
-                success = await task
-                progressbar.update(i, force=True)  # w/o force=True, progress is lagging behind.
-                if not success:
-                    tasks_failed = True
+        progressbar = alive_it(
+            asyncio.as_completed(tasks),
+            total=len(tasks),
+            enrich_print=False,
+            disable=not args.progressbar
+        )
+        for task in progressbar:
+            success = await task
+            if not success:
+                tasks_failed = True
     return 1 if tasks_failed else 0
 
 

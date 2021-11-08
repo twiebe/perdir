@@ -15,7 +15,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
     platforms='any',
-    install_requires=['progressbar2', 'termcolor'],
+    install_requires=['alive-progress', 'termcolor'],
     entry_points={
         'console_scripts': ['perdir=perdir.main:entrypoint']
     },
