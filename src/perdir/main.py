@@ -41,13 +41,11 @@ class ParallelismArgumentType:
 
 
 class ExecuteCommand:
-    def __init__(self, path: Path, command: Union[str, list], failed_output_only: bool, semaphore: asyncio.Semaphore,
-                 print_lock: asyncio.Lock):
+    def __init__(self, path: Path, command: Union[str, list], failed_output_only: bool, semaphore: asyncio.Semaphore):
         self._path = path
         self._command = command
         self._failed_output_only = failed_output_only
         self._semaphore = semaphore
-        self._print_lock = print_lock
         self._output = None
         self._exit_code = None
         self._success = None
@@ -172,15 +170,13 @@ async def main():
 
     loop = asyncio.get_event_loop()
     semaphore = asyncio.Semaphore(worker_count)
-    print_lock = asyncio.Lock()
     tasks = []
     for path in paths:
         command = ExecuteCommand(
             path,
             cmd_argv,
             args.failed_output_only,
-            semaphore,
-            print_lock)
+            semaphore)
         task = loop.create_task(command.do(), name=path)
         tasks.append(task)
     tasks_failed = False
